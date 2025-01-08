@@ -1,15 +1,15 @@
 import Hero from "@/components/Hero";
 import Services from "@/components/Services";
-import React from "react";
+import ContactButton from "@/components/ContactButton"; // Import the new ContactButton component
 
-function page() {
+const Page = () => {
   return (
     <div>
+      <ContactButton /> {/* Include the ContactButton component */}
       <Hero />
       <Services />
-      
     </div>
   );
-}
+};
 
-export default page;
+export default Page;
