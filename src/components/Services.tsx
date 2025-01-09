@@ -118,7 +118,7 @@ const Services = () => {
         {/* Modern Services Grid */}
         <div className="mt-24">
           {/* Header Section */}
-          <div className="text-center mb-16">
+          <div id="services" className="text-center mb-16">
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -130,7 +130,7 @@ const Services = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="mt-8 text-4xl sm:text-5xl font-bold tracking-tight leading-[1.1] bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent"
+              className="mt-8 pb-4 text-4xl sm:text-5xl font-bold tracking-tight leading-[1.1] bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent"
             >
               Transforming Ideas
               <br />

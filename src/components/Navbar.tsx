@@ -1,20 +1,21 @@
 "use client";
 import React, { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { MailIcon, Menu, X } from "lucide-react";
 import Link from "next/link";
+// import { Link as ScrollLink, animateScroll as scroll } from "react-scroll";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const navLinks = [
-    { name: "Home", href: "#" },
-    { name: "About", href: "#" },
-    { name: "Customer", href: "#" },
-    { name: "Services", href: "#" },
-  ];
+  // const navLinks = [
+  //   { name: "Home", href: "#" },
+  //   { name: "About", href: "#" },
+  //   { name: "Customer", href: "#" },
+  //   { name: "Services", href: "#services" },
+  // ];
 
   return (
-    <header className="w-full bg-white shadow-lg fixed top-0 z-50">
+    <header className="w-full bg-white bg-opacity-90 shadow-lg fixed top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -28,7 +29,7 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex">
+          {/* <nav className="hidden md:flex">
             <ul className="flex space-x-8">
               {navLinks.map((link) => (
                 <li key={link.name}>
@@ -41,15 +42,17 @@ const Navbar = () => {
                 </li>
               ))}
             </ul>
-          </nav>
+          </nav> */}
 
           {/* Contact Button */}
           <div className="hidden md:block">
             <Link
-              href="#"
+              href="mailto:resheph.inayat7@gmail.com"
+              target="_blank"
               className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200"
             >
-              Contact Us
+              <MailIcon className="h-6 w-6 text-white pr-1" />
+              Email
             </Link>
           </div>
 
@@ -71,7 +74,7 @@ const Navbar = () => {
       </div>
 
       {/* Mobile menu */}
-      <div className={`md:hidden ${isMenuOpen ? "block" : "hidden"}`}>
+      {/* <div className={`md:hidden ${isMenuOpen ? "block" : "hidden"}`}>
         <div className="px-2 pt-2 pb-3 space-y-1 bg-white shadow-lg">
           {navLinks.map((link) => (
             <Link
@@ -89,7 +92,7 @@ const Navbar = () => {
             Contact Us
           </a>
         </div>
-      </div>
+      </div> */}
     </header>
   );
 };
