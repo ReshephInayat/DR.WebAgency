@@ -59,8 +59,8 @@ const Services = () => {
             <div className="flex items-center gap-8">
               {[...Array(3)].map((_, index) => (
                 <div key={index} className="flex items-center gap-4">
-                  <h1 className="font-bold text-4xl md:text-5xl lg:text-6xl bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text">
-                    We Help You Grow
+                  <h1 className="pb-10 font-bold text-4xl md:text-5xl lg:text-6xl bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text">
+                    We are in Business of Helping You
                   </h1>
                   <motion.div
                     animate={{ rotate: 360 }}
@@ -89,9 +89,9 @@ const Services = () => {
           >
             <div className="flex items-center gap-8">
               {[...Array(3)].map((_, index) => (
-                <div key={index} className="flex items-center gap-4">
-                  <h1 className="font-bold text-4xl md:text-5xl lg:text-6xl bg-gradient-to-r from-purple-600 to-blue-600 text-transparent bg-clip-text">
-                    Your Business Partner
+                <div key={index} className=" flex items-center gap-4">
+                  <h1 className="pb-10 font-bold text-4xl md:text-5xl lg:text-6xl bg-gradient-to-r from-purple-600 to-blue-600 text-transparent bg-clip-text">
+                    To grow your business
                   </h1>
                   <motion.div
                     animate={{

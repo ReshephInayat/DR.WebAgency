@@ -17,7 +17,7 @@ const Hero = () => {
           <section className="text-center lg:text-left">
             <div className="inline-flex items-center px-4 py-2 bg-blue-100 rounded-full mb-8 animate-fade-in">
               <span className="text-blue-600 text-sm font-medium">
-                New Feature Launch 🚀
+                New Launch 🚀
               </span>
             </div>
 
