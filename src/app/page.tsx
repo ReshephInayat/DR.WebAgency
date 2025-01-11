@@ -1,20 +1,20 @@
 import Hero from "@/components/Hero";
 import Services from "@/components/Services";
-import ContactButton from "@/components/ContactButton"; // Import the new ContactButton component
+import ContactButton from "@/components/ContactButton";
 import BookMeeting from "@/components/Bookmeeting";
 import ScrollContext from "@/context/ScrollContext";
-import Footer from "@/components/Footer";
+import CardGrid from "@/components/CardGrid";
 
 const Page = () => {
   return (
     <div>
       <ScrollContext>
-        <ContactButton /> {/* Include the ContactButton component */}
+        <ContactButton />
         <Hero />
         <Services />
+        <CardGrid />
         <BookMeeting />
       </ScrollContext>
-      <Footer />
     </div>
   );
 };

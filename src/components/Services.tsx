@@ -132,9 +132,9 @@ const Services = () => {
               transition={{ delay: 0.1 }}
               className="mt-8 pb-4 text-4xl sm:text-5xl font-bold tracking-tight leading-[1.1] bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent"
             >
-              Transforming Ideas
+              We Create
               <br />
-              Into Digital Reality
+              Modern & Affordable Websites
             </motion.h2>
           </div>
 
