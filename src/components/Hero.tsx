@@ -51,8 +51,8 @@ const Hero = () => {
             {/* Stats */}
             <div className="mt-12 grid grid-cols-3 gap-4 max-w-lg mx-auto lg:mx-0 animate-fade-in delay-500">
               {[
-                { label: "Active Users", value: "10K+" },
-                { label: "Countries", value: "25+" },
+                { label: "Active Users", value: "100+" },
+                { label: "Countries", value: "1" },
                 { label: "Success Rate", value: "98%" },
               ].map((stat) => (
                 <div

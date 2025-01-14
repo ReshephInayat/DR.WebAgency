@@ -4,6 +4,7 @@ import ContactButton from "@/components/ContactButton";
 import BookMeeting from "@/components/Bookmeeting";
 import ScrollContext from "@/context/ScrollContext";
 import CardGrid from "@/components/CardGrid";
+import AnimatedTestimonialsDemo from "@/components/Testimonials";
 
 const Page = () => {
   return (
@@ -14,6 +15,7 @@ const Page = () => {
         <Services />
         <CardGrid />
         <BookMeeting />
+        <AnimatedTestimonialsDemo />
       </ScrollContext>
     </div>
   );

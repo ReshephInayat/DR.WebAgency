@@ -11,7 +11,7 @@ type CardProps = {
   imageUrl: string;
   link: string;
   linkLabel: string;
-  buttonLabel: string;
+  // buttonLabel: string;
 };
 
 const ThreeDCard: React.FC<CardProps> = ({
@@ -20,7 +20,7 @@ const ThreeDCard: React.FC<CardProps> = ({
   imageUrl,
   link,
   linkLabel,
-  buttonLabel,
+  // buttonLabel,
 }) => {
   return (
     <CardContainer className="inter-var">
@@ -56,13 +56,6 @@ const ThreeDCard: React.FC<CardProps> = ({
             className="px-4 py-2 rounded-xl text-xs font-normal text-black"
           >
             {linkLabel}
-          </CardItem>
-          <CardItem
-            translateZ={20}
-            as="button"
-            className="px-4 py-2 rounded-xl bg-black dark:bg-white dark:text-black text-white text-xs font-bold"
-          >
-            {buttonLabel}
           </CardItem>
         </div>
       </CardBody>
