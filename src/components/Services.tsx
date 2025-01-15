@@ -116,7 +116,7 @@ const Services = () => {
         </div>
 
         {/* Modern Services Grid */}
-        <div className="mt-24">
+        <div id="services" className="mt-24">
           {/* Header Section */}
           <div id="services" className="text-center mb-16">
             <motion.p

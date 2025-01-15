@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
-import { ArrowRight, ChevronDown } from "lucide-react";
+import { ArrowRight, MailIcon } from "lucide-react";
+import Link from "next/link";
 
 const Hero = () => {
   return (
@@ -38,13 +39,15 @@ const Hero = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-fade-in delay-400">
-              <button className="group inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-lg text-lg font-medium transition-all duration-200 hover:bg-blue-700 hover:scale-105 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                Get Started
-                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </button>
+              <Link href={"#services"}>
+                <button className="group inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-lg text-lg font-medium transition-all duration-200 hover:bg-blue-700 hover:scale-105 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                  Get Started
+                  <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </button>
+              </Link>
               <button className="group inline-flex items-center justify-center px-6 py-3 bg-red-600 text-white rounded-lg text-lg font-medium transition-all duration-200 hover:bg-red-700 hover:scale-105 focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
-                Explore!
-                <ChevronDown className="ml-2 w-5 h-5 group-hover:translate-y-1 transition-transform" />
+                <MailIcon className="h-6 w-6 text-white pr-1" />
+                Email
               </button>
             </div>
 

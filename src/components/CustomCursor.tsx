@@ -1,27 +1,39 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 const CustomCursor = () => {
-  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   const [isClicking, setIsClicking] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [trail, setTrail] = useState<{ x: number; y: number }[]>([]);
 
+  const cursorRef = useRef({ x: 0, y: 0 });
+  const displayedCursorRef = useRef({ x: 0, y: 0 });
+
   useEffect(() => {
     const updateCursorPosition = (e: MouseEvent) => {
-      const { clientX, clientY } = e;
-      setCursorPosition({ x: clientX, y: clientY });
+      cursorRef.current = { x: e.clientX, y: e.clientY };
+    };
+
+    const animateCursor = () => {
+      displayedCursorRef.current.x +=
+        (cursorRef.current.x - displayedCursorRef.current.x) * 0.1;
+      displayedCursorRef.current.y +=
+        (cursorRef.current.y - displayedCursorRef.current.y) * 0.1;
 
       // Update trail
       setTrail((prev) => {
-        const newTrail = [...prev, { x: clientX, y: clientY }];
-        return newTrail.slice(-5); // Keep last 5 positions for trail effect
+        const newTrail = [
+          ...prev,
+          { x: displayedCursorRef.current.x, y: displayedCursorRef.current.y },
+        ];
+        return newTrail.slice(-10); // Keep last 10 positions for a smoother trail
       });
+
+      requestAnimationFrame(animateCursor);
     };
 
     const handleMouseDown = () => setIsClicking(true);
     const handleMouseUp = () => setIsClicking(false);
-
     const handleMouseEnter = () => setIsHovering(true);
     const handleMouseLeave = () => setIsHovering(false);
 
@@ -41,6 +53,9 @@ const CustomCursor = () => {
 
     // Hide default cursor
     document.body.style.cursor = "none";
+
+    // Start cursor animation
+    animateCursor();
 
     return () => {
       document.removeEventListener("mousemove", updateCursorPosition);
@@ -64,11 +79,11 @@ const CustomCursor = () => {
         className={`fixed pointer-events-none z-50 mix-blend-difference
           ${isHovering ? "w-16 h-16" : "w-8 h-8"}
           ${isClicking ? "scale-75" : "scale-100"}
-          transition-all duration-200 ease-out`}
+          transition-transform duration-200 ease-out`}
         style={{
           transform: `translate(${
-            cursorPosition.x - (isHovering ? 32 : 16)
-          }px, ${cursorPosition.y - (isHovering ? 32 : 16)}px)`,
+            displayedCursorRef.current.x - (isHovering ? 32 : 16)
+          }px, ${displayedCursorRef.current.y - (isHovering ? 32 : 16)}px)`,
         }}
       >
         <div className="relative w-full h-full">
@@ -79,10 +94,10 @@ const CustomCursor = () => {
       {/* Center dot */}
       <div
         id="cursor-dot"
-        className="fixed w-2 h-2 bg-white rounded-full pointer-events-none z-50 mix-blend-difference transition-transform duration-150"
+        className="fixed w-2 h-2 bg-white rounded-full pointer-events-none z-50 mix-blend-difference"
         style={{
-          transform: `translate(${cursorPosition.x - 4}px, ${
-            cursorPosition.y - 4
+          transform: `translate(${displayedCursorRef.current.x - 1}px, ${
+            displayedCursorRef.current.y - 1
           }px)`,
         }}
       />
@@ -91,11 +106,11 @@ const CustomCursor = () => {
       {trail.map((pos, index) => (
         <div
           key={index}
-          className="fixed w-1 h-1 bg-white rounded-full pointer-events-none z-40 mix-blend-difference opacity-30"
+          className="fixed w-1 h-1 bg-white rounded-full pointer-events-none z-40 mix-blend-difference"
           style={{
-            transform: `translate(${pos.x - 2}px, ${pos.y - 2}px)`,
-            transition: "opacity 0.2s",
-            opacity: (index / trail.length) * 0.3,
+            transform: `translate(${pos.x - 0.5}px, ${pos.y - 0.5}px)`,
+            opacity: (index + 1) / trail.length,
+            transition: "opacity 0.3s ease-out",
           }}
         />
       ))}

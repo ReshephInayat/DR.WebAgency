@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { MailIcon, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import Link from "next/link";
 // import { Link as ScrollLink, animateScroll as scroll } from "react-scroll";
 
@@ -45,16 +45,16 @@ const Navbar = () => {
           </nav> */}
 
           {/* Contact Button */}
-          <div className="hidden md:block">
+          {/* <div className="hidden md:block">
             <Link
               href="mailto:resheph.inayat7@gmail.com"
               target="_blank"
               className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200"
             >
-              <MailIcon className="h-6 w-6 text-white pr-1" />
+             
               Email
             </Link>
-          </div>
+          </div> */}
 
           {/* Mobile menu button */}
           <div className="md:hidden">
