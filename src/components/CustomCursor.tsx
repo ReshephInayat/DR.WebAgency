@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useRef } from "react";
 
 const CustomCursor = () => {
+  const [isLargeScreen, setIsLargeScreen] = useState(false);
   const [isClicking, setIsClicking] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [trail, setTrail] = useState<{ x: number; y: number }[]>([]);
@@ -10,6 +11,24 @@ const CustomCursor = () => {
   const displayedCursorRef = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
+    const handleResize = () => {
+      setIsLargeScreen(window.matchMedia("(min-width: 1024px)").matches);
+    };
+
+    handleResize(); // Set initial state
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isLargeScreen) {
+      document.body.style.cursor = "auto";
+      return;
+    }
+
     const updateCursorPosition = (e: MouseEvent) => {
       cursorRef.current = { x: e.clientX, y: e.clientY };
     };
@@ -20,13 +39,12 @@ const CustomCursor = () => {
       displayedCursorRef.current.y +=
         (cursorRef.current.y - displayedCursorRef.current.y) * 0.1;
 
-      // Update trail
       setTrail((prev) => {
         const newTrail = [
           ...prev,
           { x: displayedCursorRef.current.x, y: displayedCursorRef.current.y },
         ];
-        return newTrail.slice(-10); // Keep last 10 positions for a smoother trail
+        return newTrail.slice(-10); // Keep last 10 positions
       });
 
       requestAnimationFrame(animateCursor);
@@ -37,12 +55,10 @@ const CustomCursor = () => {
     const handleMouseEnter = () => setIsHovering(true);
     const handleMouseLeave = () => setIsHovering(false);
 
-    // Add event listeners
     document.addEventListener("mousemove", updateCursorPosition);
     document.addEventListener("mousedown", handleMouseDown);
     document.addEventListener("mouseup", handleMouseUp);
 
-    // Add hover effect for interactive elements
     const interactiveElements = document.querySelectorAll(
       "button, a, input, textarea"
     );
@@ -51,10 +67,7 @@ const CustomCursor = () => {
       el.addEventListener("mouseleave", handleMouseLeave);
     });
 
-    // Hide default cursor
     document.body.style.cursor = "none";
-
-    // Start cursor animation
     animateCursor();
 
     return () => {
@@ -69,7 +82,11 @@ const CustomCursor = () => {
 
       document.body.style.cursor = "auto";
     };
-  }, []);
+  }, [isLargeScreen]);
+
+  if (!isLargeScreen) {
+    return null; // Don't render anything on small screens
+  }
 
   return (
     <>
