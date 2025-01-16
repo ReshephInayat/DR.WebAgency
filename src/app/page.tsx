@@ -5,18 +5,21 @@ import BookMeeting from "@/components/Bookmeeting";
 import ScrollContext from "@/context/ScrollContext";
 import CardGrid from "@/components/CardGrid";
 import AnimatedTestimonialsDemo from "@/components/Testimonials";
+import { BlockProvider } from "@/context/BlockContext";
 
 const Page = () => {
   return (
     <div>
-      <ScrollContext>
-        <ContactButton />
-        <Hero />
-        <Services />
-        <CardGrid />
-        <BookMeeting />
-        <AnimatedTestimonialsDemo />
-      </ScrollContext>
+      <BlockProvider>
+        <ScrollContext>
+          <ContactButton />
+          <Hero />
+          <Services />
+          <CardGrid />
+          <BookMeeting />
+          <AnimatedTestimonialsDemo />
+        </ScrollContext>
+      </BlockProvider>
     </div>
   );
 };
