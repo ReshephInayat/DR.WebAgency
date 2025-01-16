@@ -3,6 +3,7 @@ import React from "react";
 // import Image from "next/image";
 import { motion } from "framer-motion";
 import { ArrowUpRight, Code, Layout, ShoppingBag, Globe } from "lucide-react";
+import { cardVariants } from "@/lib/motion";
 
 const Services = () => {
   const services = [
@@ -145,9 +146,10 @@ const Services = () => {
               return (
                 <motion.div
                   key={service.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
+                  variants={cardVariants}
+                  initial={index % 2 === 0 ? "hiddenLeft" : "hiddenRight"}
+                  whileInView="visible"
+                  viewport={{ once: true, amount: 0.3 }} // Optimized viewport settings
                   className="group relative"
                 >
                   <div
