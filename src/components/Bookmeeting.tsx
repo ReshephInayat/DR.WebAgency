@@ -1,33 +1,38 @@
 "use client";
+
 import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 import PhoneInput from "react-phone-input-2";
+import { z } from "zod";
+import { motion, AnimatePresence } from "framer-motion";
+import { Calendar, Check, Loader2, AlertTriangle } from "lucide-react";
 import "react-datepicker/dist/react-datepicker.css";
 import "react-phone-input-2/lib/style.css";
-import {
-  Clock,
-  Calendar,
-  User,
-  Mail,
-  MessageSquare,
-  Check,
-  Loader2,
-} from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 
-const BookMeeting = () => {
+// Form validation schema
+const BookingSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Invalid email address"),
+  phone: z.string().min(10, "Invalid phone number"),
+  message: z.string().optional(),
+});
+
+type BookingData = z.infer<typeof BookingSchema>;
+
+const BookMeeting: React.FC = () => {
   const [date, setDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string>("");
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<BookingData>({
     name: "",
     email: "",
     phone: "",
     message: "",
   });
+  const [errors, setErrors] = useState<Partial<BookingData>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  // Rest of the time slots and variants code remains the same...
   const timeSlots = [
     "09:00",
     "09:30",
@@ -48,343 +53,238 @@ const BookMeeting = () => {
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: undefined }));
   };
 
   const handlePhoneChange = (value: string) => {
     setFormData((prev) => ({ ...prev, phone: value }));
+    setErrors((prev) => ({ ...prev, phone: undefined }));
+  };
+
+  const validateForm = () => {
+    try {
+      BookingSchema.parse(formData);
+      return true;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const formErrors = error.flatten().fieldErrors;
+        setErrors(formErrors);
+      }
+      return false;
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError(null);
+
+    if (!date || !selectedTime) {
+      setSubmitError("Please select a date and time.");
+      return;
+    }
+
+    if (!validateForm()) return;
+
     setIsSubmitting(true);
-
-    const formattedDate = date?.toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    });
-
-    const messageWithDateTime = `Meeting requested for ${formattedDate} at ${selectedTime}.\n\nAdditional message: ${formData.message}`;
 
     try {
       const response = await fetch("https://formspree.io/f/xgvvreon", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
-          message: messageWithDateTime,
-          date: formattedDate,
+          date: date.toLocaleDateString(),
           time: selectedTime,
         }),
       });
 
-      if (response.ok) {
-        setSubmitted(true);
-        setTimeout(() => {
-          setSubmitted(false);
-          setFormData({ name: "", email: "", phone: "", message: "" });
-          setDate(null);
-          setSelectedTime("");
-        }, 3000);
-      }
+      if (!response.ok) throw new Error("Submission failed");
+
+      setSubmitted(true);
+      setTimeout(() => {
+        resetForm();
+      }, 3000);
     } catch (error) {
-      console.error("Error submitting form:", error);
+      setSubmitError("Failed to schedule meeting. Please try again.");
+      console.error(error);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Rest of the helper functions remain the same...
+  const resetForm = () => {
+    setSubmitted(false);
+    setFormData({ name: "", email: "", phone: "", message: "" });
+    setDate(null);
+    setSelectedTime("");
+    setErrors({});
+  };
+
   const isWeekday = (date: Date) => {
     const day = date.getDay();
     return day !== 0 && day !== 6;
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: "easeOut" },
-    },
-  };
-
-  const formVariants = {
-    hidden: { opacity: 0, x: 20 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: { duration: 0.4, delay: 0.3 },
-    },
-  };
-
   return (
-    <section className="py-10 min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <motion.div
-        className="max-w-6xl mx-auto px-4 sm:px-6"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        {/* Header section remains the same... */}
-        <div className="text-center mb-12">
-          <motion.h2
-            className="pb-5 text-4xl md:text-5xl font-bold mb-3 bg-clip-text text-transparent bg-blue-600"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            Book a Meeting
-          </motion.h2>
-          <motion.p
-            className="text-gray-600 text-lg"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-          >
-            Choose your preferred time slot and let us connect
-          </motion.p>
-        </div>
+    <section className="py-16 bg-gradient-to-b from-gray-50 to-white">
+      <div className="max-w-4xl mx-auto px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white shadow-xl rounded-2xl overflow-hidden"
+        >
+          <div className="p-8">
+            <h2 className="text-3xl font-bold mb-4 text-center text-gray-800">
+              Schedule a Meeting
+            </h2>
+            <p className="text-center text-gray-600 mb-8">
+              Choose your preferred date and time
+            </p>
 
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Date and Time Selection section remains the same... */}
-          <motion.div
-            className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300"
-            variants={formVariants}
-          >
-            {/* Date and Time Selection content remains the same... */}
-            <h3 className="text-xl font-semibold mb-6 flex items-center gap-2">
-              <Calendar className="text-blue-500" size={24} />
-              Select Date & Time
-            </h3>
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Date and Time Selection */}
+              <div>
+                <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                  <Calendar className="text-blue-500" />
+                  Select Date & Time
+                </h3>
 
-            <div className="mb-8 relative">
-              <DatePicker
-                selected={date}
-                onChange={(date) => setDate(date)}
-                minDate={new Date()}
-                filterDate={isWeekday}
-                placeholderText="Select a date"
-                className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                dateFormat="MMMM d, yyyy"
-              />
-            </div>
+                <DatePicker
+                  selected={date}
+                  onChange={(date) => setDate(date)}
+                  minDate={new Date()}
+                  filterDate={isWeekday}
+                  placeholderText="Select a date"
+                  className="w-full p-3 border rounded-lg"
+                />
 
-            <AnimatePresence>
-              {date && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <h4 className="text-lg font-medium mb-4 flex items-center gap-2">
-                    <Clock className="text-blue-500" size={20} />
-                    Available Time Slots
-                  </h4>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                    {timeSlots.map((time) => (
-                      <motion.button
-                        key={time}
-                        onClick={() => setSelectedTime(time)}
-                        className={`p-3 rounded-lg transition-all ${
-                          selectedTime === time
-                            ? "bg-blue-500 text-white shadow-lg scale-105"
-                            : "bg-gray-50 hover:bg-gray-100 hover:scale-102"
-                        }`}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                      >
-                        {time}
-                      </motion.button>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
+                <AnimatePresence>
+                  {date && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                    >
+                      <h4 className="mt-4 mb-2 font-medium">
+                        Available Time Slots
+                      </h4>
+                      <div className="grid grid-cols-3 gap-2">
+                        {timeSlots.map((time) => (
+                          <motion.button
+                            key={time}
+                            onClick={() => setSelectedTime(time)}
+                            className={`p-2 rounded ${
+                              selectedTime === time
+                                ? "bg-blue-500 text-white"
+                                : "bg-gray-100 hover:bg-gray-200"
+                            }`}
+                            whileTap={{ scale: 0.95 }}
+                          >
+                            {time}
+                          </motion.button>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
 
-          {/* Contact Form */}
-          <motion.div
-            className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300"
-            variants={formVariants}
-          >
-            <h3 className="text-xl font-semibold mb-6 flex items-center gap-2">
-              <User className="text-blue-500" size={24} />
-              Your Information
-            </h3>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Name field remains the same... */}
-              <div className="relative">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Full Name
-                </label>
-                <div className="relative">
+              {/* Contact Form */}
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label className="block mb-2">Name</label>
                   <input
                     type="text"
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className="w-full p-3 pl-10 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                    placeholder="Enter your name"
-                    required
+                    className="w-full p-3 border rounded-lg"
+                    placeholder="Your name"
                   />
-                  <User
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                    size={18}
-                  />
+                  {errors.name && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.name[0]}
+                    </p>
+                  )}
                 </div>
-              </div>
-              {/* New Phone field */}
-              <div className="relative">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Phone Number
-                </label>
-                <div className="relative">
-                  <div className="phone-input-container">
-                    <PhoneInput
-                                          country={"pk"}
-                                          
-                      value={formData.phone}
-                      onChange={handlePhoneChange}
-                      inputClass="w-full p-3 pl-12 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                      containerClass="phone-input"
-                      buttonClass="phone-button"
-                    />
-                  </div>
-              
-                </div>
-              </div>
 
-              {/* Email field remains the same... */}
-              <div className="relative">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email Address
-                </label>
-                <div className="relative">
+                <div>
+                  <label className="block mb-2">Email</label>
                   <input
                     type="email"
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full p-3 pl-10 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                    placeholder="Enter your email"
-                    required
+                    className="w-full p-3 border rounded-lg"
+                    placeholder="your@email.com"
                   />
-                  <Mail
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                    size={18}
-                  />
+                  {errors.email && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.email[0]}
+                    </p>
+                  )}
                 </div>
-              </div>
 
-              {/* Message field remains the same... */}
-              <div className="relative">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Message (Optional)
-                </label>
-                <div className="relative">
+                <div>
+                  <label className="block mb-2">Phone</label>
+                  <PhoneInput
+                    country="pk"
+                    value={formData.phone}
+                    onChange={handlePhoneChange}
+                    inputProps={{ name: "phone" }}
+                    containerClass="w-full"
+                    inputClass="w-full p-3 border rounded-lg"
+                  />
+                  {errors.phone && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.phone[0]}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block mb-2">Message (Optional)</label>
                   <textarea
                     name="message"
                     value={formData.message}
                     onChange={handleChange}
-                    className="w-full p-3 pl-10 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent h-32 resize-none transition-all duration-200"
-                    placeholder="Add any additional details..."
-                  />
-                  <MessageSquare
-                    className="absolute left-3 top-4 text-gray-400"
-                    size={18}
+                    className="w-full p-3 border rounded-lg h-24"
+                    placeholder="Additional details"
                   />
                 </div>
-              </div>
 
-              <motion.button
-                type="submit"
-                disabled={
-                  !date ||
-                  !selectedTime ||
-                  !formData.name ||
-                  !formData.email ||
-                  !formData.phone ||
-                  isSubmitting
-                }
-                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold py-3 px-6 rounded-lg 
-                          hover:from-blue-600 hover:to-blue-700 transition-all duration-200 disabled:opacity-50 
-                          disabled:cursor-not-allowed disabled:hover:from-blue-500 disabled:hover:to-blue-600
-                          flex items-center justify-center gap-2"
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.99 }}
-              >
-                {isSubmitting ? (
-                  <Loader2 className="animate-spin" size={20} />
-                ) : submitted ? (
-                  <Check size={20} />
-                ) : (
-                  "Schedule Meeting"
+                {submitError && (
+                  <div className="bg-red-50 p-3 rounded flex items-center gap-2">
+                    <AlertTriangle className="text-red-500" />
+                    <p className="text-red-700">{submitError}</p>
+                  </div>
                 )}
-              </motion.button>
-            </form>
-          </motion.div>
-        </div>
 
-        {/* Selected Date/Time Summary remains the same... */}
-        <AnimatePresence>
-          {date && selectedTime && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="mt-8 bg-white p-4 rounded-xl shadow-md border border-gray-100 max-w-md mx-auto"
-            >
-              <p className="text-center text-gray-700">
-                Selected Date & Time:{" "}
-                <span className="font-semibold">
-                  {date.toLocaleDateString("en-US", {
-                    month: "long",
-                    day: "numeric",
-                    year: "numeric",
-                  })}{" "}
-                  at {selectedTime}
-                </span>
-              </p>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
-
-      {/* Add custom styles for phone input */}
-      <style jsx global>{`
-        .phone-input {
-          font-family: inherit;
-        }
-        .phone-input .special-label {
-          display: none;
-        }
-        .phone-input .selected-flag {
-          background-color: transparent !important;
-        }
-        .phone-input .selected-flag:hover,
-        .phone-input .selected-flag:focus {
-          background-color: transparent !important;
-        }
-        .phone-input .flag-dropdown {
-          border: none !important;
-          background-color: transparent !important;
-        }
-        .phone-input .form-control {
-          width: 100% !important;
-          height: auto !important;
-          padding-left: 48px !important;
-        }
-        .phone-input .country-list {
-          border-radius: 0.5rem;
-          border: 1px solid #e5e7eb;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-            0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-      `}</style>
+                <motion.button
+                  type="submit"
+                  disabled={isSubmitting || submitted}
+                  className={`w-full p-3 rounded-lg text-white font-semibold transition ${
+                    isSubmitting || submitted
+                      ? "bg-gray-400"
+                      : "bg-blue-500 hover:bg-blue-600"
+                  }`}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  {isSubmitting ? (
+                    <Loader2 className="mx-auto animate-spin" />
+                  ) : submitted ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <Check /> Meeting Scheduled
+                    </div>
+                  ) : (
+                    "Schedule Meeting"
+                  )}
+                </motion.button>
+              </form>
+            </div>
+          </div>
+        </motion.div>
+      </div>
     </section>
   );
 };

@@ -4,7 +4,7 @@ import ContactButton from "@/components/ContactButton";
 import BookMeeting from "@/components/Bookmeeting";
 import ScrollContext from "@/context/ScrollContext";
 import CardGrid from "@/components/CardGrid";
-import AnimatedTestimonialsDemo from "@/components/Testimonials";
+// import AnimatedTestimonialsDemo from "@/components/Testimonials";
 import { BlockProvider } from "@/context/BlockContext";
 
 const Page = () => {
@@ -17,7 +17,7 @@ const Page = () => {
           <Services />
           <CardGrid />
           <BookMeeting />
-          <AnimatedTestimonialsDemo />
+          {/* <AnimatedTestimonialsDemo /> */}
         </ScrollContext>
       </BlockProvider>
     </div>

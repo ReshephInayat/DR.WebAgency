@@ -1,66 +1,77 @@
+// components/ProjectCard.tsx
 "use client";
 
 import Image from "next/image";
-import React from "react";
-import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
-type CardProps = {
+type ProjectTech = {
+  name: string;
+  color: string;
+};
+
+type ProjectCardProps = {
   title: string;
   description: string;
   imageUrl: string;
   link: string;
-  linkLabel: string;
-  // buttonLabel: string;
+  technologies: ProjectTech[];
 };
 
-const ThreeDCard: React.FC<CardProps> = ({
+export const ProjectCard: React.FC<ProjectCardProps> = ({
   title,
   description,
   imageUrl,
   link,
-  linkLabel,
-  // buttonLabel,
+  technologies,
 }) => {
   return (
-    <CardContainer className="inter-var">
-      <CardBody className="relative group/card  dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-auto sm:w-[30rem] h-auto rounded-xl ">
-        <CardItem
-          translateZ="50"
-          className="text-xl font-bold text-black"
-        >
-          {title}
-        </CardItem>
-        <CardItem
-          as="p"
-          translateZ="60"
-          className="text-black text-sm max-w-sm mt-2"
-        >
-          {description}
-        </CardItem>
-        <CardItem translateZ="100" className="w-full mt-4">
-          <Image
-            src={imageUrl || "/image1.png"}
-            height="1000"
-            width="1000"
-            className="h-60 w-full object-cover rounded-xl group-hover/card:shadow-xl"
-            alt="thumbnail"
-          />
-        </CardItem>
-        <div className="flex justify-between items-center mt-5">
-          <CardItem
-            translateZ={20}
-            as={Link}
-            href={link || "/"}
-            target="__blank"
-            className="px-4 py-2 rounded-xl text-xs font-normal text-black"
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5 }}
+      viewport={{ once: true }}
+      className="project-card bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group"
+    >
+      <div className="relative">
+        <Image
+          priority
+          src={imageUrl}
+          alt={title}
+          width={1000}
+          height={1000}
+          className="w-full h-82 object-cover transition-transform duration-300 group-hover:scale-105"
+        />
+        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+          <Link
+            href={link}
+            target="_blank"
+            className="bg-white/90 px-4 py-2 rounded-full text-sm font-medium hover:bg-white transition-colors"
           >
-            {linkLabel}
-          </CardItem>
+            View Project
+          </Link>
         </div>
-      </CardBody>
-    </CardContainer>
+      </div>
+
+      <div className="p-4">
+        <h3 className="text-xl font-bold mb-2">{title}</h3>
+        <p className="text-gray-600 dark:text-gray-300 mb-4">{description}</p>
+
+        <div className="flex flex-wrap gap-2">
+          {technologies.map((tech) => (
+            <span
+              key={tech.name}
+              className="px-2 py-1 rounded-full text-xs font-medium"
+              style={{
+                backgroundColor: `${tech.color}20`,
+                color: tech.color,
+              }}
+            >
+              {tech.name}
+            </span>
+          ))}
+        </div>
+      </div>
+    </motion.div>
   );
 };
-
-export default ThreeDCard;

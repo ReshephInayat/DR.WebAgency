@@ -6,20 +6,29 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const ContactButton = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      // Optional: Use showInitialMessage or remove it if not needed
-    }, 2000);
+    // Check screen size and update isMobile state
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 640); // Tailwind's sm breakpoint
+    };
 
-    return () => clearTimeout(timer);
+    // Check initial screen size
+    checkMobile();
+
+    // Add event listener for window resize
+    window.addEventListener("resize", checkMobile);
+
+    // Cleanup event listener
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   return (
-    <div className="fixed bottom-4 right-4 z-50">
+    <div className="fixed bottom-10 right-8 sm:bottom-10 sm:right-8 z-50">
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
-        className="group bg-gradient-to-r from-blue-500 to-purple-600 p-4 rounded-full shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
+        className="group bg-gradient-to-r from-blue-500 to-purple-600 p-3 sm:p-4 rounded-full shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
         whileHover={{ rotate: 15 }}
         whileTap={{ scale: 0.9 }}
       >
@@ -28,9 +37,9 @@ const ContactButton = () => {
           transition={{ duration: 0.3 }}
         >
           {isOpen ? (
-            <X className="w-6 h-6 text-white" />
+            <X className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
           ) : (
-            <MessageCircle className="w-6 h-6 text-white" />
+            <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
           )}
         </motion.div>
       </motion.button>
@@ -42,13 +51,25 @@ const ContactButton = () => {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ duration: 0.3 }}
-            className="fixed bottom-20 right-4 z-50 w-full sm:w-96 h-[70vh] max-h-[600px] bg-white rounded-lg shadow-2xl overflow-hidden"
+            className={`fixed bottom-20 right-4 z-50 w-[95vw] sm:w-96 
+              ${
+                isMobile
+                  ? "h-[70vh] max-h-[800px] inset-x-2.5"
+                  : "h-[70vh] max-h-[600px]"
+              } 
+              bg-white rounded-lg shadow-2xl overflow-hidden`}
           >
             <div className="flex flex-col h-full">
-              <div className="p-4 bg-gradient-to-r from-blue-500 to-purple-600">
-                <h2 className="text-lg font-semibold text-white">
+              <div className="p-3 sm:p-4 bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-between">
+                <h2 className="text-base sm:text-lg font-semibold text-white">
                   Chat with us
                 </h2>
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="sm:hidden text-white hover:bg-blue-600/30 rounded-full p-1"
+                >
+                  <X className="w-5 h-5" />
+                </button>
               </div>
               <div className="flex-1 overflow-hidden">
                 <iframe

@@ -3,7 +3,7 @@ import React from "react";
 // import Image from "next/image";
 import { motion } from "framer-motion";
 import { ArrowUpRight, Code, Layout, ShoppingBag, Globe } from "lucide-react";
-import { cardVariants } from "@/lib/motion";
+
 
 const Services = () => {
   const services = [
@@ -141,15 +141,11 @@ const Services = () => {
 
           {/* Services Grid */}
           <div className="grid md:grid-cols-2 gap-8">
-            {services.map((service, index) => {
+            {services.map((service) => {
               const Icon = service.icon;
               return (
-                <motion.div
+                <div
                   key={service.title}
-                  variants={cardVariants}
-                  initial={index % 2 === 0 ? "hiddenLeft" : "hiddenRight"}
-                  whileInView="visible"
-                  viewport={{ once: true, amount: 0.3 }} // Optimized viewport settings
                   className="group relative"
                 >
                   <div
@@ -187,7 +183,7 @@ const Services = () => {
 
                     <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-transparent to-transparent group-hover:via-current opacity-0 group-hover:opacity-100 transition-all duration-500" />
                   </div>
-                </motion.div>
+                </div>
               );
             })}
           </div>
