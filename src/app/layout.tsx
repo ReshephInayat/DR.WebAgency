@@ -17,7 +17,34 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Dr.WebAgency",
-  description: "Exploring Innovative Paths to Cultivate Your Business",
+  description: "Your Digital Prescription for Growth",
+  keywords: ["web development", "web development agency", "web design"],
+  category: "Web Development",
+  applicationName: "Dr.WebAgency",
+  openGraph: {
+    title: "Dr.WebAgency",
+    description: "Your Digital Prescription for Growth",
+    url: "https://www.drweb.agency/",
+    type: "website",
+    siteName: "Dr.WebAgency",
+    images: [
+      {
+        url: "https://i.imgur.com/khl5k65.png",
+        width: 1200,
+        height: 630,
+        alt: "Dr.WebAgency",
+      },
+    ],
+  },
+  alternates: {
+    canonical: "https://www.drweb.agency/",
+    languages: {
+      "en-US": "https://www.drweb.agency/",
+    },
+    types: {
+      "application/rss+xml": "https://www.drweb.agency/rss",
+    },
+  },
 };
 
 export default function RootLayout({
@@ -28,6 +55,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="!scroll-smooth w-full h-full overflow-x-hidden">
       <body
+        suppressHydrationWarning={true}
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Navbar />
