@@ -18,7 +18,7 @@ const Navbar = () => {
           {/* whatsapp */}
           <div className="flex items-center">
             <a
-              href="https://wa.me/923435306597"
+              href="https://wa.me/923369869922"
               target="_blank"
               rel="noopener noreferrer"
               className="text-green-600"
