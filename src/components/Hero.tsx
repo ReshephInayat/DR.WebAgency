@@ -46,7 +46,7 @@ const Hero = () => {
                 </button>
               </Link>
               <div className="flex justify-center items-center">
-                <Link target="_blank" href="mailto:resheph.inayat7@gmail.com">
+                <Link target="_blank" href="mailto:drwebagency.pk@gmail.com">
                   <button className="w-40 group inline-flex items-center justify-center px-6 py-3 bg-red-600 text-white rounded-lg text-lg font-medium transition-all duration-200 hover:bg-red-700 hover:scale-105 focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
                     <MailIcon className="h-6 w-6 text-white pr-1" />
                     Email

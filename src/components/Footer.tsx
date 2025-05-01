@@ -122,8 +122,8 @@ const Footer = () => {
             <ul className="space-y-2">
               {/* <li>123 Tech Street</li> */}
               {/* <li>Silicon Valley, CA 94025</li> */}
-              <li>contact@devagency.com</li>
-              <li>(555) 123-4567</li>
+              <li>drwebagency.pk@gmail.com</li>
+              <li>92 3369869922</li>
             </ul>
           </div>
         </div>
